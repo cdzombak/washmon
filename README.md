@@ -2,7 +2,7 @@
 
 Given an InfluxDB measurement for washing machine power usage, `washmon` figures out when a load of laundry is done and reminds you about it periodically until you affirm that you've emptied the machine.
 
-Complete README is forthcoming (TK: issue link).
+Complete README is forthcoming ([see #1](https://github.com/cdzombak/washmon/issues/1)).
 
 ## License
 
