@@ -1,0 +1,6 @@
+-s dir
+--name washmon
+--description "Figures out when a load of laundry is done and reminds you about it periodically until you affirm that you've emptied the machine"
+--url "https://github.com/cdzombak/washmon"
+--maintainer "Chris Dzombak <https://www.dzombak.com>"
+--license MIT
