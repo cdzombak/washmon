@@ -64,9 +64,7 @@ func (c *Config) SetDefaults() {
 	if c.APIRoot == "" {
 		c.APIRoot = "http://localhost:8080"
 	}
-	if strings.HasSuffix(c.APIRoot, "/") {
-		c.APIRoot = c.APIRoot[:len(c.APIRoot)-1]
-	}
+	c.APIRoot = strings.TrimSuffix(c.APIRoot, "/")
 	if c.NtfyTimeoutS == 0 {
 		c.NtfyTimeoutS = 10
 	}
