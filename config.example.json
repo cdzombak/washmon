@@ -1,0 +1,21 @@
+{
+  "state_file": "/Users/me/.local/washmon.json",
+  "influx_server": "http://myinflux.lan:8086",
+  "influx_user": "",
+  "influx_password": "",
+  "influx_token": "",
+  "influx_org": "",
+  "influx_health_check_disabled": false,
+  "power_mean_running_threshold": 5.0,
+  "prior_window_power_mean_query": "from(bucket:\"myhome\")\n    |> range(start: -10m, stop: -10m)\n    |> filter(fn: (r) => r._measurement == \"washing_machine\" and r._field == \"power\")\n    |> mean()",
+  "current_window_power_mean_query": "from(bucket:\"myhome\")\n    |> range(start: -10m)\n    |> filter(fn: (r) => r._measurement == \"washing_machine\" and r._field == \"power\")\n    |> mean()",
+  "notify_every_minutes": 30,
+  "api_port": 8000,
+  "api_root": "https://my-tailnet-98712.ts.net:9020",
+  "ntfy_server": "https://ntfy.sh",
+  "ntfy_token": "tk_1234567890abcdef",
+  "ntfy_topic": "washing-machine",
+  "ntfy_timeout_s": 10,
+  "ntfy_tags": "alarm_clock",
+  "ntfy_priority": 3
+}
