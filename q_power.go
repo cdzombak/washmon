@@ -24,6 +24,12 @@ func DoPowerWindowQuery(ctx context.Context, qAPI api.QueryAPI, q string) (float
 		}}
 	}
 	qResult.Next()
+	if qResult.Record() == nil {
+		return 0, &multierror.Error{Errors: []error{
+			ErrQueryFailed,
+			err,
+		}}
+	}
 	qResultVal := qResult.Record().Value()
 	_ = qResult.Close()
 	if qResult.Err() != nil {
