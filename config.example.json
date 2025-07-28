@@ -19,8 +19,6 @@
   "ntfy_tags": "alarm_clock",
   "ntfy_priority": 3,
   "heartbeat_url": "",
-  "heartbeat_interval_s": 60,
-  "heartbeat_liveness_threshold_s": 120,
   "heartbeat_timeout_s": 10,
   "heartbeat_port": 0
 }
