@@ -110,7 +110,10 @@ func (c *Config) Validate() error {
 		}
 	}
 	if c.HeartbeatPort < 0 || c.HeartbeatPort > 65535 {
-		return fmt.Errorf("heartbeat_port must be in the range [0, 65535]")
+		return fmt.Errorf("heartbeat_port must be in the range [1, 65535] (0 is not allowed)")
+	}
+	if c.HeartbeatPort == 0 && c.HeartbeatURL == "" {
+		return fmt.Errorf("either heartbeat_url or heartbeat_port (> 0) must be configured")
 	}
 	return nil
 }
