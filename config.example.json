@@ -17,5 +17,8 @@
   "ntfy_topic": "washing-machine",
   "ntfy_timeout_s": 10,
   "ntfy_tags": "alarm_clock",
-  "ntfy_priority": 3
+  "ntfy_priority": 3,
+  "heartbeat_url": "",
+  "heartbeat_timeout_s": 10,
+  "heartbeat_port": 0
 }

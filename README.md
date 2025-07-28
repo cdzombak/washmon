@@ -49,6 +49,14 @@ Configuration is provided by a JSON file, which contains the following fields:
 - `api_port`: Port for the web API (default: 8080).
 - `api_root`: Base URL for the web API (default: "http://localhost:8080").
 
+#### Heartbeat Configuration
+
+- `heartbeat_url`: URL to send periodic heartbeat pings to (optional). Useful for external monitoring services like Uptime Kuma.
+- `heartbeat_port`: Port to serve a health check endpoint on (optional). The endpoint responds at `/` with `{"ok":true}` when healthy.
+- `heartbeat_timeout_s`: HTTP timeout for outgoing heartbeat pings in seconds (default: 10).
+
+Either `heartbeat_url` or `heartbeat_port` (or both) can be configured. Heartbeats are sent every minute, and the system is considered unhealthy if InfluxDB queries fail or the application stops responding for 2 minutes or longer.
+
 A sample config file is included in this repository to help you get started: [`config.example.json`](https://github.com/cdzombak/washmon/blob/main/config.example.json).
 
 ### How It Works

@@ -12,6 +12,7 @@ import (
 
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api"
+	"github.com/cdzombak/heartbeat"
 )
 
 var version = "<dev>"
@@ -75,12 +76,31 @@ func main() {
 		}
 	}()
 
-	if err := RunMain(ctx, config, qAPI); err != nil {
+	var hb heartbeat.Heartbeat
+	if config.HeartbeatURL != "" || config.HeartbeatPort > 0 {
+		var err error
+		hb, err = heartbeat.NewHeartbeat(&heartbeat.Config{
+			HeartbeatInterval: 1 * time.Minute,
+			LivenessThreshold: 2 * time.Minute,
+			HeartbeatURL:      config.HeartbeatURL,
+			HTTPTimeout:       config.HeartbeatTimeout(),
+			Port:              config.HeartbeatPort,
+			OnError: func(err error) {
+				log.Printf("heartbeat error: %v", err)
+			},
+		})
+		if err != nil {
+			log.Fatalf("failed to create heartbeat: %v", err)
+		}
+		hb.Start()
+	}
+
+	if err := RunMain(ctx, config, qAPI, hb); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func RunMain(ctx context.Context, cfg *Config, q api.QueryAPI) error {
+func RunMain(ctx context.Context, cfg *Config, q api.QueryAPI, hb heartbeat.Heartbeat) error {
 	state := &WashmonState{}
 	if cfg.StateFile != "" {
 		s, err := StateFromFile(cfg.StateFile)
@@ -144,6 +164,10 @@ func RunMain(ctx context.Context, cfg *Config, q api.QueryAPI) error {
 			wasMachineRunning := priorPwrWindowMean > cfg.PowerMeanRunningThreshold
 			isMachineRunning := currentPwrWindowMean > cfg.PowerMeanRunningThreshold
 			didMachineStop := !isMachineRunning && wasMachineRunning
+
+			if hb != nil {
+				hb.Alive(time.Now())
+			}
 
 			state.Lock()
 
