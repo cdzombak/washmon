@@ -80,8 +80,8 @@ func main() {
 	if config.HeartbeatURL != "" || config.HeartbeatPort > 0 {
 		var err error
 		hb, err = heartbeat.NewHeartbeat(&heartbeat.Config{
-			HeartbeatInterval: 2 * time.Minute,
-			LivenessThreshold: 4 * time.Minute,
+			HeartbeatInterval: 1 * time.Minute,
+			LivenessThreshold: 2 * time.Minute,
 			HeartbeatURL:      config.HeartbeatURL,
 			HTTPTimeout:       config.HeartbeatTimeout(),
 			Port:              config.HeartbeatPort,
