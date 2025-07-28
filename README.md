@@ -1,6 +1,6 @@
 # washmon
 
-Monitor washing machine power usage from InfluxDB and send notifications when a load is done.
+Given an InfluxDB measurement for washing machine power usage, `washmon` figures out when a load of laundry is done and reminds you about it periodically until you affirm that you've emptied the machine.
 
 ## Usage
 
@@ -16,6 +16,8 @@ washmon -config /path/to/config.json [-version]
 ### Configuration
 
 Configuration is provided by a JSON file, which contains the following fields:
+
+- `state_file`: Path to persist application state (optional).
 
 #### InfluxDB Configuration
 
@@ -46,7 +48,6 @@ Configuration is provided by a JSON file, which contains the following fields:
 
 - `api_port`: Port for the web API (default: 8080).
 - `api_root`: Base URL for the web API (default: "http://localhost:8080").
-- `state_file`: Path to persist application state (optional).
 
 A sample config file is included in this repository to help you get started: [`config.example.json`](https://github.com/cdzombak/washmon/blob/main/config.example.json).
 
@@ -61,6 +62,8 @@ A sample config file is included in this repository to help you get started: [`c
 When the machine transitions to "Done", `washmon` sends periodic notifications via ntfy with action buttons to:
 - **✅ I emptied it**: Acknowledges the machine has been emptied (transitions to Clear)
 - **💤 Mute 3h**: Temporarily mutes notifications for 3 hours
+
+Starting the machine again (e.g., for another load) also stops notification sending.
 
 The web API provides endpoints for these actions, allowing integration with home automation systems or manual acknowledgment via web requests.
 
@@ -77,12 +80,14 @@ brew install cdzombak/oss/washmon
 Install my Debian repository if you haven't already:
 
 ```shell
-sudo apt-get install ca-certificates curl gnupg
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://dist.cdzombak.net/deb.key | sudo gpg --dearmor -o /etc/apt/keyrings/dist-cdzombak-net.gpg
-sudo chmod 0644 /etc/apt/keyrings/dist-cdzombak-net.gpg
-echo -e "deb [signed-by=/etc/apt/keyrings/dist-cdzombak-net.gpg] https://dist.cdzombak.net/deb/oss any oss\n" | sudo tee -a /etc/apt/sources.list.d/dist-cdzombak-net.list > /dev/null
-sudo apt-get update
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://dist.cdzombak.net/keys/dist-cdzombak-net.gpg -o /etc/apt/keyrings/dist-cdzombak-net.gpg
+sudo chmod 644 /etc/apt/keyrings/dist-cdzombak-net.gpg
+
+sudo mkdir -p /etc/apt/sources.list.d
+sudo curl -fsSL https://dist.cdzombak.net/cdzombak-oss.sources -o /etc/apt/sources.list.d/cdzombak-oss.sources
+sudo chmod 644 /etc/apt/sources.list.d/cdzombak-oss.sources
+sudo apt update
 ```
 
 Then install `washmon` via `apt-get`:
@@ -130,4 +135,4 @@ This runs on my home server as a systemd service, monitoring my washing machine'
 
 ## License
 
-MIT; see `LICENSE` in this repository.
+MIT; see [`LICENSE`](LICENSE) in this repository.
