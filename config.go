@@ -30,6 +30,11 @@ type Config struct {
 	NtfyTimeoutS                int     `json:"ntfy_timeout_s"`
 	NtfyTagsStr                 string  `json:"ntfy_tags"`
 	NtfyPriority                int     `json:"ntfy_priority"`
+	HeartbeatURL                string  `json:"heartbeat_url,omitempty"`
+	HeartbeatIntervalS          int     `json:"heartbeat_interval_s"`
+	HeartbeatLivenessThresholdS int     `json:"heartbeat_liveness_threshold_s"`
+	HeartbeatTimeoutS           int     `json:"heartbeat_timeout_s"`
+	HeartbeatPort               int     `json:"heartbeat_port"`
 }
 
 func ConfigFromFile(filename string) (*Config, error) {
@@ -71,6 +76,15 @@ func (c *Config) SetDefaults() {
 	if c.NtfyPriority == 0 {
 		c.NtfyPriority = 3
 	}
+	if c.HeartbeatIntervalS == 0 {
+		c.HeartbeatIntervalS = 60
+	}
+	if c.HeartbeatLivenessThresholdS == 0 {
+		c.HeartbeatLivenessThresholdS = 120
+	}
+	if c.HeartbeatTimeoutS == 0 {
+		c.HeartbeatTimeoutS = 10
+	}
 }
 
 func (c *Config) Validate() error {
@@ -98,6 +112,14 @@ func (c *Config) Validate() error {
 	if _, err := url.Parse(c.APIRoot); err != nil {
 		return fmt.Errorf("api_root is not a valid URL")
 	}
+	if c.HeartbeatURL != "" {
+		if _, err := url.Parse(c.HeartbeatURL); err != nil {
+			return fmt.Errorf("heartbeat_url is not a valid URL")
+		}
+	}
+	if c.HeartbeatPort < 0 || c.HeartbeatPort > 65535 {
+		return fmt.Errorf("heartbeat_port must be in the range [0, 65535]")
+	}
 	return nil
 }
 
@@ -123,4 +145,16 @@ func (c *Config) NtfyServerURL() *url.URL {
 
 func (c *Config) NtfyTags() []string {
 	return strings.Split(c.NtfyTagsStr, ",")
+}
+
+func (c *Config) HeartbeatInterval() time.Duration {
+	return time.Duration(c.HeartbeatIntervalS) * time.Second
+}
+
+func (c *Config) HeartbeatLivenessThreshold() time.Duration {
+	return time.Duration(c.HeartbeatLivenessThresholdS) * time.Second
+}
+
+func (c *Config) HeartbeatTimeout() time.Duration {
+	return time.Duration(c.HeartbeatTimeoutS) * time.Second
 }
