@@ -176,9 +176,6 @@ func RunMain(ctx context.Context, cfg *Config, q api.QueryAPI, hb heartbeat.Hear
 				if isMachineRunning {
 					log.Println("transition from Clear to Running")
 					state.CurrentMachineState = Running
-				} else if didMachineStop {
-					log.Println("transition from Clear to Done")
-					state.CurrentMachineState = Done
 				}
 				state.LastNotificationAt = time.Time{}
 			case Running:
