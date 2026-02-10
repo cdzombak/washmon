@@ -15,6 +15,7 @@ func ackHandler(cfg *Config, state *WashmonState) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		state.Lock()
 		if state.CurrentMachineState == Done {
+			log.Println("transition from Done to Clear (user ack)")
 			state.CurrentMachineState = Clear
 			state.LastNotificationAt = time.Time{}
 		}
